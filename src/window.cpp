@@ -1,6 +1,11 @@
 #include "SDL_video.h"
 #include "backends/imgui_impl_opengl3.h"
 #include "backends/imgui_impl_sdl2.h"
+
+#ifdef WINDOWS
+    #include "backends/imgui_impl_win32.h"
+#endif
+
 #include "gui.hpp"
 #include "imgui.h"
 #include "output.hpp"
@@ -24,6 +29,10 @@ namespace adaptiday
             adaptiday::output::error("SDL_Init", std::string(SDL_GetError()));
             programSafeExit(-1);
         }
+
+#ifdef WINDOWS
+        ImGui_ImplWin32_EnableDpiAwareness();
+#endif
 
         // Decide GL+GLSL versions
 #if defined(IMGUI_IMPL_OPENGL_ES2)
@@ -57,10 +66,10 @@ namespace adaptiday
         SDL_GL_SetAttribute(SDL_GL_DEPTH_SIZE, 24);
         SDL_GL_SetAttribute(SDL_GL_STENCIL_SIZE, 8);
         auto window_flags = (SDL_WindowFlags)(SDL_WINDOW_OPENGL | SDL_WINDOW_ALLOW_HIGHDPI);
-        SDL_Window* window = SDL_CreateWindow(
-            "", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 0, 0, window_flags | SDL_WINDOW_HIDDEN);
-        // SDL_Window* window =
-        //     SDL_CreateWindow("", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1000, 1000, window_flags);
+        // SDL_Window* window = SDL_CreateWindow(
+        //     "", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 0, 0, window_flags | SDL_WINDOW_HIDDEN);
+        SDL_Window* window =
+            SDL_CreateWindow("", SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, 1000, 500, window_flags);
         if (window == nullptr)
         {
             adaptiday::output::error("SDL_CreateWindow"s, std::string(SDL_GetError()));
@@ -76,15 +85,17 @@ namespace adaptiday
         ImGui::CreateContext();
         ImGuiIO& io = ImGui::GetIO();
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
-        io.ConfigFlags |= ImGuiConfigFlags_ViewportsEnable; // Enable multi-viewport / platform windows
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
+
+        ImGui::GetStyle().FrameRounding = 5;
+        ImGui::GetStyle().WindowRounding = 4;
+        ImGui::GetStyle().WindowMenuButtonPosition = ImGuiDir_Left;
 
         // Setup Platform/Renderer backends
         ImGui_ImplSDL2_InitForOpenGL(window, gl_context);
         ImGui_ImplOpenGL3_Init(glsl_version);
 
         bool done = false;
-        ImVec4 clear_color = ImVec4(0.22, 0.22, 0.22, 1.00);
         std::array<char, 100> buf{};
         loadFonts(&io);
 
@@ -134,13 +145,7 @@ namespace adaptiday
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
             SDL_GL_SwapWindow(window);
 
-            // Update and Render additional Platform Windows
-            if ((io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) != 0)
-            {
-                ImGui::UpdatePlatformWindows();
-                ImGui::RenderPlatformWindowsDefault();
-                // TODO for OpenGL: restore current GL context.
-            }
+            ImGui::EndFrame();
         }
 
         // Cleanup

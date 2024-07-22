@@ -4,13 +4,15 @@
 
 #ifdef MACOSX
     #include <CoreFoundation/CoreFoundation.h>
+#elif defined(WINDOWS)
+    #include <windows.h>
 #endif
 
 namespace adaptiday::__internals
 {
     bool isDarkModeEnabled()
     {
-#ifdef MACOSX
+#if defined(MACOSX)
         bool isDarkMode = false;
         CFPreferencesAppSynchronize(CFSTR("AppleInterfaceStyle"));
         CFPropertyListRef value = CFPreferencesCopyAppValue(CFSTR("AppleInterfaceStyle"), kCFPreferencesAnyApplication);
@@ -45,7 +47,7 @@ namespace adaptiday::__internals
     }
 
     void addFontIfExistent(const ImGuiIO* io,
-                           const std::filesystem::path& path,
+                           const std::string& path,
                            const ImFontConfig* config,
                            const ImWchar* ranges) noexcept
     {
@@ -56,7 +58,7 @@ namespace adaptiday::__internals
 #ifdef DEBUG
             output::info("addIfExistent"s, "Added font {0}"s, { path });
 #endif
-            io->Fonts->AddFontFromFileTTF(path.c_str(), 15.0F, config, ranges);
+            io->Fonts->AddFontFromFileTTF((char*)path.c_str(), 15.0F, config, ranges);
         }
     }
 
@@ -80,22 +82,22 @@ namespace adaptiday::__internals
         // Vietnamese -> Segoe UI -----------------+
 
         // Load top-priority fonts
-        addIfExistent(io, "C:/Windows/Fonts/segoeui.ttf", &config, io->Fonts->GetGlyphRangesCyrillic());
-        addIfExistent(io, "C:/Windows/Fonts/segoeui.ttf", &config, io->Fonts->GetGlyphRangesDefault());
-        addIfExistent(io, "C:/Windows/Fonts/segoeui.ttf", &config, io->Fonts->GetGlyphRangesGreek());
-        addIfExistent(io, "C:/Windows/Fonts/segoeui.ttf", &config, io->Fonts->GetGlyphRangesVietnamese());
+        addFontIfExistent(io, "C:/Windows/Fonts/segoeui.ttf", &config, io->Fonts->GetGlyphRangesCyrillic());
+        addFontIfExistent(io, "C:/Windows/Fonts/segoeui.ttf", &config, io->Fonts->GetGlyphRangesDefault());
+        addFontIfExistent(io, "C:/Windows/Fonts/segoeui.ttf", &config, io->Fonts->GetGlyphRangesGreek());
+        addFontIfExistent(io, "C:/Windows/Fonts/segoeui.ttf", &config, io->Fonts->GetGlyphRangesVietnamese());
 
         // Load Chinese fonts
-        addIfExistent(io, "C:/Windows/Fonts/msyh.ttc", &config, io->Fonts->GetGlyphRangesChineseFull());
+        addFontIfExistent(io, "C:/Windows/Fonts/msyh.ttc", &config, io->Fonts->GetGlyphRangesChineseFull());
 
         // Load Japanese fonts
-        addIfExistent(io, "C:/Windows/Fonts/meiryo.ttc", &config, io->Fonts->GetGlyphRangesJapanese());
+        addFontIfExistent(io, "C:/Windows/Fonts/meiryo.ttc", &config, io->Fonts->GetGlyphRangesJapanese());
 
         // Load Korean fonts
-        addIfExistent(io, "C:/Windows/Fonts/malgun.ttf", &config, io->Fonts->GetGlyphRangesKorean());
+        addFontIfExistent(io, "C:/Windows/Fonts/malgun.ttf", &config, io->Fonts->GetGlyphRangesKorean());
 
         // Load Thai fonts
-        addIfExistent(io, "C:/Windows/Fonts/leelawad.ttf", &config, io->Fonts->GetGlyphRangesThai());
+        addFontIfExistent(io, "C:/Windows/Fonts/leelawad.ttf", &config, io->Fonts->GetGlyphRangesThai());
 #elif defined(MACOSX)
         // MACOS fonts
         // -------------

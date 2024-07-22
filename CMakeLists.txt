@@ -14,7 +14,8 @@ IF (CMAKE_SYSTEM_NAME STREQUAL "Linux")
     ADD_COMPILE_DEFINITIONS(LINUX)
     SET(LINUX TRUE CACHE INTERNAL "OS is Linux")
 ELSEIF (CMAKE_SYSTEM_NAME STREQUAL "Windows")
-    ADD_COMPILE_DEFINITIONS(WINDOWS)
+    ADD_COMPILE_DEFINITIONS(WINDOWS NOMINMAX)
+    SET(CMAKE_CXX_FLAGS "/utf-8 /EHsc") # Enable MSVC utf-8 support.
     SET(WINDOWS TRUE CACHE INTERNAL "OS is Windows")
 ELSEIF (CMAKE_SYSTEM_NAME STREQUAL "Darwin")
     ADD_COMPILE_DEFINITIONS(MACOSX)
@@ -36,13 +37,18 @@ SET(SOURCES main.cpp)
 ADD_SUBDIRECTORY(src)
 ADD_SUBDIRECTORY(include)
 
-ADD_LIBRARY(imgui STATIC ${BASE_DIR}/imgui/imgui.cpp
-                         ${BASE_DIR}/imgui/imgui_draw.cpp
-                         ${BASE_DIR}/imgui/imgui_widgets.cpp
-                         ${BASE_DIR}/imgui/imgui_tables.cpp
-                         ${BASE_DIR}/imgui/imgui_multicontext_compositor.cpp
-                         ${BASE_DIR}/imgui/backends/imgui_impl_sdl2.cpp
-                         ${BASE_DIR}/imgui/backends/imgui_impl_opengl3.cpp)
+SET(IMGUI_SOURCES ${BASE_DIR}/imgui/imgui.cpp
+		  ${BASE_DIR}/imgui/imgui_draw.cpp
+		  ${BASE_DIR}/imgui/imgui_widgets.cpp
+		  ${BASE_DIR}/imgui/imgui_tables.cpp
+                  # ${BASE_DIR}/imgui/imgui_multicontext_compositor.cpp
+                  ${BASE_DIR}/imgui/backends/imgui_impl_sdl2.cpp
+                  ${BASE_DIR}/imgui/backends/imgui_impl_opengl3.cpp)
+
+IF (WINDOWS)
+    SET(IMGUI_SOURCES ${IMGUI_SOURCES} ${BASE_DIR}/imgui/backends/imgui_impl_win32.cpp)
+ENDIF()
+ADD_LIBRARY(imgui STATIC ${IMGUI_SOURCES})
 
 ADD_EXECUTABLE(AdaptiDay ${SOURCES})
 TARGET_LINK_LIBRARIES(imgui PRIVATE

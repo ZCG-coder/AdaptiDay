@@ -59,7 +59,7 @@ namespace adaptiday::__internals
      * @param ranges A pointer to an array of ImWchar objects to enable character range configuration.
      */
     void addFontIfExistent(const ImGuiIO* io,
-                           const std::filesystem::path& path,
+                           const std::string& path,
                            const ImFontConfig* config,
                            const ImWchar* ranges) noexcept;
 

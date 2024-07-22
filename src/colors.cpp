@@ -26,9 +26,12 @@
 
 #ifdef WINDOWS
     #include <cstdio>
+
+// clang-format off
+    #include <windows.h>
+// clang-format on
     #include <io.h>
     #include <versionhelpers.h>
-    #include <windows.h>
     // ReSharper disable once CppInconsistentNaming
     #define isatty _isatty
     // ReSharper disable once CppInconsistentNaming
