@@ -1,5 +1,6 @@
 #include "gui.hpp"
 
+#include "imgui.h"
 #include "output.hpp"
 
 #ifdef MACOSX
@@ -58,7 +59,7 @@ namespace adaptiday::__internals
 #ifdef DEBUG
             output::info("addIfExistent"s, "Added font {0}"s, { path });
 #endif
-            io->Fonts->AddFontFromFileTTF((char*)path.c_str(), 15.0F, config, ranges);
+            io->Fonts->AddFontFromFileTTF(static_cast<const char*>(path.c_str()), 25.0F, config, ranges);
         }
     }
 
@@ -70,6 +71,10 @@ namespace adaptiday::__internals
 
         ImFontConfig config;
         config.MergeMode = true;
+        config.RasterizerDensity = 2.0F;
+        config.PixelSnapH = true;
+        config.OversampleH = config.OversampleV = 3;
+
 #ifdef WINDOWS
         // WINDOWS fonts
         // -------------
@@ -168,5 +173,6 @@ namespace adaptiday::__internals
         io->Fonts->AddFontDefault();
 #endif
         io->Fonts->Build();
+        ImGui::GetIO().FontGlobalScale = 0.6F;
     }
 } // namespace adaptiday::__internals

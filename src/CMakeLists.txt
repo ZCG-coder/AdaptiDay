@@ -6,4 +6,5 @@ SET(SOURCES ${SOURCES} ${BASE_DIR}/src/colors.cpp
                        ${BASE_DIR}/src/store/day.cpp
                        ${BASE_DIR}/src/elements/table.cpp
                        ${BASE_DIR}/src/elements/editingModal.cpp
+                       ${BASE_DIR}/src/elements/calendar.cpp
                        ${BASE_DIR}/src/logging.cpp PARENT_SCOPE)

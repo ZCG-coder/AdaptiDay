@@ -87,8 +87,7 @@ namespace adaptiday
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
-        ImGui::GetStyle().FrameRounding = 5;
-        ImGui::GetStyle().WindowRounding = 4;
+        ImGui::GetStyle().FrameRounding = 7;
         ImGui::GetStyle().WindowMenuButtonPosition = ImGuiDir_Left;
 
         // Setup Platform/Renderer backends
@@ -123,7 +122,7 @@ namespace adaptiday
             // Start the Dear ImGui frame
             ImGui_ImplOpenGL3_NewFrame();
             ImGui_ImplSDL2_NewFrame();
-	    ImGui::NewFrame();
+            ImGui::NewFrame();
 
             predicate();
 
@@ -140,7 +139,10 @@ namespace adaptiday
 
             // Rendering
             ImGui::Render();
-            glViewport(0, 0, (int)io.DisplaySize.x, (int)io.DisplaySize.y);
+            int drawableWidth = 0;
+            int drawableHeight = 0;
+            SDL_GL_GetDrawableSize(window, &drawableWidth, &drawableHeight);
+            glViewport(0, 0, drawableWidth, drawableHeight);
             glClear(GL_COLOR_BUFFER_BIT);
             ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
             SDL_GL_SwapWindow(window);
